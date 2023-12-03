@@ -41,15 +41,15 @@ jobs:
             REGISTRY: ${{ steps.login-ecr.outputs.registry }}
             REPOSITORY: multi-k8s
         run: |
-            docker build -t $REGISTRY/$REPOSITORY:latest -t $REGISTRY/$REPOSITORY:${{ env.SHA }} -f ./client/Dockerfile ./client
-            docker push $REGISTRY/$REPOSITORY:client-latest 
-            docker push $REGISTRY/$REPOSITORY:${{ env.SHA }}
-            docker build -t $REGISTRY/$REPOSITORY:latest -t $REGISTRY/$REPOSITORY:${{ env.SHA }} -f ./server/Dockerfile ./server
-            docker push $REGISTRY/$REPOSITORY:server-latest
-            docker push $REGISTRY/$REPOSITORY:${{ env.SHA }}
-            docker build -t $REGISTRY/$REPOSITORY:latest -t $REGISTRY/$REPOSITORY:${{ env.SHA }} -f ./worker/Dockerfile ./worker
-            docker push $REGISTRY/$REPOSITORY:server-latest
-            docker push $REGISTRY/$REPOSITORY:${{ env.SHA }}
+            docker build -t $REGISTRY/$REPOSITORY/client:latest -t $REGISTRY/$REPOSITORY/client:${{ env.SHA }} -f ./client/Dockerfile ./client
+            docker push $REGISTRY/$REPOSITORY/client:latest 
+            docker push $REGISTRY/$REPOSITORY/client:${{ env.SHA }}
+            docker build -t $REGISTRY/$REPOSITORY/server:latest -t $REGISTRY/$REPOSITORY/server:${{ env.SHA }} -f ./server/Dockerfile ./server
+            docker push $REGISTRY/$REPOSITORY/server:latest
+            docker push $REGISTRY/$REPOSITORY/server:${{ env.SHA }}
+            docker build -t $REGISTRY/$REPOSITORY/worker:latest -t $REGISTRY/$REPOSITORY/worker:${{ env.SHA }} -f ./worker/Dockerfile ./worker
+            docker push $REGISTRY/$REPOSITORY/worker:latest
+            docker push $REGISTRY/$REPOSITORY/worker:${{ env.SHA }}
 
       - name: Update kube config
         run: aws eks update-kubeconfig --region eu-west-1 --name multi-k8s 
