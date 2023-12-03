@@ -2,7 +2,7 @@ name: Deploy MultiK8s on AWS EKS
 on:
   push:
     branches:
-      - main
+      - master
 
 env:
   SHA: $(git rev-parse HEAD)
@@ -49,23 +49,8 @@ jobs:
             docker push $REGISTRY/$REPOSITORY:latest
             docker push $REGISTRY/$REPOSITORY:${{ env.SHA }}
             docker build -t $REGISTRY/$REPOSITORY:latest -t $REGISTRY/$REPOSITORY:${{ env.SHA }} -f ./worker/Dockerfile ./worker
-            $REGISTRY/$REPOSITORY:latest
-
-      - name: Build
-        run: |-
-          docker build -t shivisis/multi-client-k8s-gh:latest -t shivisis/multi-client-k8s-gh:${{ env.SHA }} -f ./client/Dockerfile ./client
-          docker build -t shivisis/multi-server-k8s-gh:latest -t shivisis/multi-server-k8s-gh:${{ env.SHA }} -f ./server/Dockerfile ./server
-          docker build -t shivisis/multi-worker-k8s-gh:latest -t shivisis/multi-worker-k8s-gh:${{ env.SHA }} -f ./worker/Dockerfile ./worker
-
-      - name: Push
-        run: |-
-          docker push shivisis/multi-client-k8s-gh:latest
-          docker push shivisis/multi-server-k8s-gh:latest
-          docker push shivisis/multi-worker-k8s-gh:latest
-
-          docker push shivisis/multi-client-k8s-gh:${{ env.SHA }}
-          docker push shivisis/multi-server-k8s-gh:${{ env.SHA }}
-          docker push shivisis/multi-worker-k8s-gh:${{ env.SHA }}
+            docker push $REGISTRY/$REPOSITORY:latest
+            docker push $REGISTRY/$REPOSITORY:${{ env.SHA }}
 
       - name: Update kube config
         run: aws eks update-kubeconfig --region eu-west-1 --name multi-k8s
