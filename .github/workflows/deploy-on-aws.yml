@@ -52,7 +52,7 @@ jobs:
             docker push $REGISTRY/$REPOSITORY:${{ env.SHA }}
 
       - name: Update kube config
-        run: aws eks update-kubeconfig --region eu-west-1 --name multi-k8s
+        run: aws eks update-kubeconfig --region eu-west-1 --name multi-k8s --role-arn arn:aws:iam::085031185171:role/eksClusterRole
 
       - name: Apply
         run: |-
