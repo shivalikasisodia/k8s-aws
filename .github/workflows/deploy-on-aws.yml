@@ -51,12 +51,6 @@ jobs:
             docker push $REGISTRY/$REPOSITORY:latest
             docker push $REGISTRY/$REPOSITORY:${{ env.SHA }}
 
-      - name: Create kubeconfig
-        run: |
-            mkdir ${HOME}/.kube
-            echo ${{ secrets.KUBE_CONFIG }} | base64 --decode > ${HOME}/.kube/config
-            cat ${HOME}/.kube/config
-
       - name: Update kube config
         run: aws eks update-kubeconfig --region eu-west-1 --name multi-k8s 
 
