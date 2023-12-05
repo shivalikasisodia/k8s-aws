@@ -72,7 +72,7 @@ jobs:
           kubectl apply -f k8s/postgres-deployment.yaml
           kubectl apply -f k8s/redis-deployment.yaml
           kubectl apply -f k8s/worker-deployment.yaml
-          kubectl apply -f k8s/databse-persistent-volume-claim.yaml
+          kubectl apply -f k8s/database-persistent-volume-claim.yaml
           kubectl set image deployments/server-deployment server=shivisis/multi-server-k8s-gh:${{ env.SHA }}
           kubectl set image deployments/client-deployment client=shivisis/multi-client-k8s-gh:${{ env.SHA }}
           kubectl set image deployments/worker-deployment worker=shivisis/multi-worker-k8s-gh:${{ env.SHA }}
