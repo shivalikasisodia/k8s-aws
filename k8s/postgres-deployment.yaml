@@ -13,16 +13,16 @@ spec:
         component: postgres
     spec:
       volumes:
-        - name: postgres-storage
+        - name: postgres-storage 
           persistentVolumeClaim:
-            claimName: database-persistent-volume-claim
+            claimName: efs-persistent-volume-claim
       containers:
         - name: postgres
           image: postgres
           ports:
             - containerPort: 5432
           volumeMounts:
-            - name: postgres-storage
+            - name: postgres-storage  #same name as the name of volume
               mountPath: /var/lib/postgresql/data
               subPath: postgres
           env:
