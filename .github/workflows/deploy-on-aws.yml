@@ -2,7 +2,7 @@ name: Deploy MultiK8s on AWS EKS
 on:
   push:
     branches:
-      - master
+      - dev
 
 env:
   SHA: $(git rev-parse HEAD)
