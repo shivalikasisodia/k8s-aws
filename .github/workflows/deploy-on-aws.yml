@@ -57,7 +57,6 @@ jobs:
 
       - name: Update kube config
         run: |-
-          mkdir .kube
           aws eks update-kubeconfig --region ap-south-1 --name multi-k8s 
           kubectl apply -f RoleBinding/ClusterRoleBinding.yaml
           kubectl get svc
