@@ -57,23 +57,35 @@ jobs:
 
       - name: Update kube config
         run: |-
-          aws eks update-kubeconfig --region eu-west-1 --name multi-k8s 
-          kubectl apply -k "github.com/kubernetes-sigs/aws-efs-csi-driver/deploy/kubernetes/overlays/stable/?ref=release-1.7"
+          mkdir .kube
+          aws eks update-kubeconfig --region ap-south-1 --name multi-k8s 
+          kubectl apply -f RoleBinding/ClusterRoleBinding.yaml
           kubectl get svc
 
-      - name: Apply
+      - name: Install efs csi driver
         run: |-
-          kubectl apply -f k8s/client-cluster-ip-service.yaml
-          kubectl apply -f k8s/client-deployment.yaml
-          kubectl apply -f k8s/server-cluster-ip-service.yaml
-          kubectl apply -f k8s/server-deployment.yaml
-          kubectl apply -f k8s/ingress-service.yaml
-          kubectl apply -f k8s/postgres-cluster-ip-service.yaml
-          kubectl apply -f k8s/redis-cluster-ip-service.yaml
-          kubectl apply -f k8s/postgres-deployment.yaml
-          kubectl apply -f k8s/redis-deployment.yaml
-          kubectl apply -f k8s/worker-deployment.yaml
-          kubectl apply -f k8s/database-persistent-volume-claim.yaml
+          kubectl apply -k "github.com/kubernetes-sigs/aws-efs-csi-driver/deploy/kubernetes/overlays/stable/?ref=release-1.7"
+
+      - name: Install helm
+        run: |-
+          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+          chmod 700 get_helm.sh
+          ./get_helm.sh
+      
+      - name: Install Ingress-nginx Controller
+        run: |-
+          helm upgrade --install ingress-nginx ingress-nginx \
+            --repo https://kubernetes.github.io/ingress-nginx \
+            --namespace ingress-nginx --create-namespace
+
+      - name: Verify Ingress installation
+        run: |-          
+          kubectl get all --namespace ingress-nginx
+          kubectl get svc --namespace ingress-nginx
+
+      - name: Apply manifest files
+        run: |-
+          kubectl apply -f k8s --namespace ingress-nginx
           kubectl set image deployments/server-deployment server=shivisis/multi-server-k8s-gh:${{ env.SHA }}
           kubectl set image deployments/client-deployment client=shivisis/multi-client-k8s-gh:${{ env.SHA }}
           kubectl set image deployments/worker-deployment worker=shivisis/multi-worker-k8s-gh:${{ env.SHA }}
@@ -84,3 +96,8 @@ jobs:
           kubectl get deployments
           kubectl get svc
           kubectl get ns
+          kubectl get sc
+          kubectl get ing
+          kubectl get pv 
+          kubectl get pvc
+          kubectl get configMap aws-auth -n kube-system -o yaml
