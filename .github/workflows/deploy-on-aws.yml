@@ -58,6 +58,7 @@ jobs:
       - name: Update kube config
         run: |-
           aws eks update-kubeconfig --region ap-south-1 --name multi-k8s 
+          aws sts get-caller-identity
           kubectl apply -f RoleBinding/ClusterRoleBinding.yaml
           kubectl get svc
 
